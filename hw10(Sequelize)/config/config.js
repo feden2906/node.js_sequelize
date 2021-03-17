@@ -7,7 +7,7 @@ module.exports = {
     ROOT_EMAIL_PASSWORD: process.env.ROOT_EMAIL_PASSWORD || '666',
     // Sequelize
     USER: 'root',
-    ROOT_DB_PASSWORD: process.env.ROOT_DB_PASSWORD || '666',
+    ROOT_DB_PASSWORD: process.env.ROOT_DB_PASSWORD || 'root',
     DATABASE: 'september-2020',
     HOST: 'localhost'
 };

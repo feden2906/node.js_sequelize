@@ -7,6 +7,10 @@ const path = require('path');
 dotenv.config({ path: path.join(process.cwd(), '../.env') });
 // dotenv.config(); тогда нужно прописать правильно путь в терминале
 
+const db = require('./dataBase/MySQL').getInstance();
+
+db.setModels();
+
 const { MONGO_URL, PORT } = require('./config/config');
 const apiRouter = require('./router/api.router'); // крашится апка, если апи.роутер деструктуризировать с ./router,
 

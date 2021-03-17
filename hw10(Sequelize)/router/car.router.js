@@ -11,7 +11,7 @@ router.route('/')
         carController.createCar
     )
     .get(
-        carMiddlewares.areNoCars, // queryBuilder vs Joi
+        // carMiddlewares.areNoCars, // нельзя выдавать ошибку, если не нашлось по запросу, -- выводить пустой массив
         carController.getAllCars
     );
 

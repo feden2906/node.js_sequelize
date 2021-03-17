@@ -10,7 +10,7 @@ const ErrorHandler = require('../messages/ErrorHandler');
 const userService = require('../service/user.service');
 const {
     commonValidators: { mongoIdValidator },
-    userValidators: { createUserValidator, findUserByQueryValidator }
+    userValidators: { createUserValidator }
 } = require('../validators');
 
 module.exports = {
@@ -79,10 +79,9 @@ module.exports = {
     areNoUsers: async (req, res, next) => {
         try {
             const users = await userService.findAllUsers(req.query);
-            const { error } = findUserByQueryValidator.validate(users);
 
             if (!users.length) {
-                throw new ErrorHandler(responseCodesEnum.BAD_REQUEST, JOI_VALIDATION.customCode, error.details[0].message);
+                throw new ErrorHandler(responseCodesEnum.BAD_REQUEST, USER_EXISTS.customCode);
             }
 
             next();

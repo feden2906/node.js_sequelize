@@ -12,7 +12,7 @@ router.route('/')
         userController.createUser
     )
     .get(
-        userMiddlewares.areNoUsers, // queryBuilder vs Joi
+        // userMiddlewares.areNoUsers, // нельзя выдавать ошибку, если не нашлось по запросу, -- выводить пустой массив
         userController.getAllUsers
     );
 

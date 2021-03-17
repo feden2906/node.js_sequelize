@@ -78,27 +78,20 @@ module.exports = {
 
             // 2nd var
 
-            const allPhotosNames = Object.keys(req.photos);
+            const { files } = req;
 
-            // или так 2.1
-            for (let i = 0; i < allPhotosNames.length; i++) {
+            for (let i = 0; i < files.length; i++) {
+                const allFilesValues = Object.values(files);
+                const allFilesNames = Object.keys(files);
+
+                const { mimetype } = allFilesValues[i];
                 // eslint-disable-next-line max-len
-                if (!allPhotosNames[i].includes('avatar')) { // если вложить файл с расширением, НЕотносящимся к фото, то юзер создастся, но фото загрузится в папку док или видео
+                if (PHOTOS_MIMETYPES.includes(mimetype) && allFilesNames[i] !== 'avatar') { // если вложить файл с расширением, НЕотносящимся к фото, то юзер создастся, но фото загрузится в папку док или видео
                     throw new ErrorHandler(responseCodesEnum.BAD_REQUEST, //
-                                    NOT_VALID_PHOTO_TYPE.customCode,
-                                    NOT_VALID_PHOTO_TYPE.ua);
+                        NOT_VALID_PHOTO_TYPE.customCode,
+                        NOT_VALID_PHOTO_TYPE.ua);
                 }
             }
-
-            // или сяк 2.2
-            // for (const allPhotosName of allPhotosNames) {
-            // eslint-disable-next-line max-len
-            //     if (allPhotosName !== 'avatar') { // если вложить файл с расширением НЕотносящимся к фото, то юзер создастся, но фото загрузится в папку док или видео
-            //         throw new ErrorHandler(responseCodesEnum.BAD_REQUEST,
-            //             NOT_VALID_PHOTO_TYPE.customCode,
-            //             NOT_VALID_PHOTO_TYPE.ua);
-            //     }
-            // }
 
             [req.avatar] = req.photos; // никогда б не догадался (без учёта условия), что это именно нулевой элемент
             // req.avatar = req.photos[0];
