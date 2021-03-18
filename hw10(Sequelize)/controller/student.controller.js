@@ -1,5 +1,8 @@
 const studentService = require('../service/MySQL/student.service');
 
+const { responseCodesEnum } = require('../constant');
+const { studentMsg: { confirmMsg: { STUDENT_CREATED } } } = require('../messages');
+
 module.exports = {
     getAll: async (req, res, next) => {
         try {
@@ -15,7 +18,7 @@ module.exports = {
         try {
             await studentService.createStu(req.body);
 
-            res.json('OK');
+            res.json(responseCodesEnum.CREATED, STUDENT_CREATED.ua);
         } catch (e) {
             next(e);
         }
