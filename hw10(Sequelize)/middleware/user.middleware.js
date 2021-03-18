@@ -76,7 +76,7 @@ module.exports = {
         }
     },
 
-    areNoUsers: async (req, res, next) => {
+    areNoUsers: async (req, res, next) => { // лучше вообще не выводить ошибку, а получать пустой массив
         try {
             const users = await userService.findAllUsers(req.query);
 
