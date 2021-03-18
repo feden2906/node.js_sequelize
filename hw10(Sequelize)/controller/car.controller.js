@@ -1,10 +1,12 @@
-const fs = require('fs-extra').promises;
-const path = require('path');
-const uuid = require('uuid').v1;
-
+const {
+    responseCodesEnum,
+    directoriesEnum: {
+        CAR, DOCS, PHOTOS, VIDEOS
+    }
+} = require('../constant');
+const { filesHandler } = require('../helpers');
 const { carMsg: { confirmMsg } } = require('../messages');
 const { carService } = require('../service');
-const { responseCodesEnum } = require('../constant');
 
 module.exports = {
     createCar: async (req, res, next) => {
@@ -14,43 +16,22 @@ module.exports = {
             } = req;
             const car = await carService.createCar(req.body, preferLang);
 
-            if (photos) {
-                for (const photo of photos) {
-                    const { finalFilePath, uploadPath, filesDir } = _filesDirBuilder(photo.name, 'photos', car._id);
+            if (docs) {
+                const uploadPath = await filesHandler.uploadFiles(CAR, DOCS, docs, car._id);
 
-                    // eslint-disable-next-line no-await-in-loop
-                    await fs.mkdir(filesDir, { recursive: true });
-                    // eslint-disable-next-line no-await-in-loop
-                    await photo.mv(finalFilePath);
-                    // eslint-disable-next-line no-await-in-loop
-                    await carService.updateCarById(car._id, { photo: uploadPath });
-                }
+                await carService.updateCarById(car._id, { docs: uploadPath });
             }
 
-            if (docs) {
-                for (const doc of docs) {
-                    const { finalFilePath, uploadPath, filesDir } = _filesDirBuilder(doc.name, 'docs', car._id);
+            if (photos) {
+                const uploadPath = await filesHandler.uploadFiles(CAR, PHOTOS, photos, car._id);
 
-                    // eslint-disable-next-line no-await-in-loop
-                    await fs.mkdir(filesDir, { recursive: true });
-                    // eslint-disable-next-line no-await-in-loop
-                    await doc.mv(finalFilePath);
-                    // eslint-disable-next-line no-await-in-loop
-                    await carService.updateCarById(car._id, { doc: uploadPath });
-                }
+                await carService.updateCarById(car._id, { photos: uploadPath });
             }
 
             if (videos) {
-                for (const video of videos) {
-                    const { finalFilePath, uploadPath, filesDir } = _filesDirBuilder(video.name, 'videos', car._id);
+                const uploadPath = await filesHandler.uploadFiles(CAR, VIDEOS, videos, car._id);
 
-                    // eslint-disable-next-line no-await-in-loop
-                    await fs.mkdir(filesDir, { recursive: true });
-                    // eslint-disable-next-line no-await-in-loop
-                    await video.mv(finalFilePath);
-                    // eslint-disable-next-line no-await-in-loop
-                    await carService.updateCarById(car._id, { video: uploadPath });
-                }
+                await carService.updateCarById(car._id, { docs: uploadPath });
             }
 
             res.status(responseCodesEnum.CREATED).json(confirmMsg.CAR_CREATED[preferLang]);
@@ -106,14 +87,3 @@ module.exports = {
         }
     }
 };
-
-function _filesDirBuilder(itemName, itemType, itemId) {
-    const pathWithoutStatic = path.join('car', `${itemId}`, itemType);
-    const filesDir = path.join(process.cwd(), 'static', pathWithoutStatic);
-    const fileExtension = itemName.split('.').pop();
-    const fileName = `${uuid()}.${fileExtension}`;
-    const finalFilePath = path.join(filesDir, fileName);
-    const uploadPath = path.join(pathWithoutStatic, fileName);
-
-    return { finalFilePath, uploadPath, filesDir };
-}

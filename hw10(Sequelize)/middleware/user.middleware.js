@@ -64,9 +64,9 @@ module.exports = {
             // 2nd var
 
             const { email } = req.body;
-            const users = await userService.findAllUsers({ email });
+            const users = await userService.findUserByEmail({ email });
 
-            if (users.length) {
+            if (users) {
                 throw new ErrorHandler(responseCodesEnum.BAD_REQUEST, USER_EXISTS.customCode);
             }
 

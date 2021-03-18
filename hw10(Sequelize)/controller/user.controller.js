@@ -1,12 +1,13 @@
-const fs = require('fs-extra').promises;
-const path = require('path');
-const uuid = require('uuid').v1;
-
-const { emailActionsEnum: { CREATION_OF_ACC, DELETION_OF_ACC } } = require('../constant');
-const { mailService, userService } = require('../service');
-const { passwordHasher } = require('../helpers');
-const { responseCodesEnum } = require('../constant');
+const {
+    responseCodesEnum,
+    emailActionsEnum: { CREATION_OF_ACC, DELETION_OF_ACC },
+    directoriesEnum: {
+        USER, DOCS, PHOTOS, VIDEOS
+    }
+} = require('../constant');
 const { userMsg: { confirmMsg } } = require('../messages');
+const { passwordHasher, filesHandler } = require('../helpers');
+const { mailService, userService } = require('../service');
 
 module.exports = {
     createUser: async (req, res, next) => {
@@ -21,43 +22,33 @@ module.exports = {
             const user = await userService.createUser({ ...req.body, password: hashPassword });
 
             if (avatar) {
+                // 1st
                 // const pathWithoutStatic = path.join('user', `${user._id}`, 'photos');
                 // const photoDir = path.join(process.cwd(), 'static', pathWithoutStatic);
                 // const fileExtension = avatar.name.split('.').pop();
                 // const photoName = `${uuid()}.${fileExtension}`;
                 // const finalPhotoPath = path.join(photoDir, photoName);
+                // 2nd
+                // const { finalFilePath, uploadPath, filesDir } = _filesDirBuilder(avatar.name, 'photos', user._id);
+                //
+                // await fs.mkdir(filesDir, { recursive: true });
+                // await avatar.mv(finalFilePath);
 
-                const { finalFilePath, uploadPath, filesDir } = _filesDirBuilder(avatar.name, 'photos', user._id);
+                const uploadPath = await filesHandler.uploadAvatar(USER, PHOTOS, avatar, user._id);
 
-                await fs.mkdir(filesDir, { recursive: true });
-                await avatar.mv(finalFilePath);
                 await userService.updateUserById(user._id, { avatar: uploadPath });
             }
 
             if (docs) {
-                for (const doc of docs) {
-                    const { finalFilePath, uploadPath, filesDir } = _filesDirBuilder(doc.name, 'docs', user._id);
+                const uploadPath = await filesHandler.uploadFiles(USER, DOCS, docs, user._id);
 
-                    // eslint-disable-next-line no-await-in-loop
-                    await fs.mkdir(filesDir, { recursive: true });
-                    // eslint-disable-next-line no-await-in-loop
-                    await doc.mv(finalFilePath);
-                    // eslint-disable-next-line no-await-in-loop
-                    await userService.updateUserById(user._id, { doc: uploadPath });
-                }
+                await userService.updateUserById(user._id, { docs: uploadPath });
             }
 
             if (videos) {
-                for (const video of videos) {
-                    const { finalFilePath, uploadPath, filesDir } = _filesDirBuilder(video.name, 'videos', user._id);
+                const uploadPath = await filesHandler.uploadFiles(USER, VIDEOS, videos, user._id);
 
-                    // eslint-disable-next-line no-await-in-loop
-                    await fs.mkdir(filesDir, { recursive: true });
-                    // eslint-disable-next-line no-await-in-loop
-                    await video.mv(finalFilePath);
-                    // eslint-disable-next-line no-await-in-loop
-                    await userService.updateUserById(user._id, { video: uploadPath });
-                }
+                await userService.updateUserById(user._id, { docs: uploadPath });
             }
 
             await mailService.sendMail(email, CREATION_OF_ACC, { userName: name }); // нейм - обязательное поле при создании юзера
@@ -117,14 +108,3 @@ module.exports = {
         }
     }
 };
-
-function _filesDirBuilder(itemName, itemType, itemId) {
-    const pathWithoutStatic = path.join('user', `${itemId}`, itemType);
-    const filesDir = path.join(process.cwd(), 'static', pathWithoutStatic);
-    const fileExtension = itemName.split('.').pop();
-    const fileName = `${uuid()}.${fileExtension}`;
-    const finalFilePath = path.join(filesDir, fileName);
-    const uploadPath = path.join(pathWithoutStatic, fileName);
-
-    return { finalFilePath, uploadPath, filesDir };
-}
