@@ -1,3 +1,5 @@
+const { dataBaseTablesEnum: { STUDENTS2_T } } = require('../../../constant');
+
 module.exports = {
     up: async (queryInterface, Sequelize) => {
     /**
@@ -7,7 +9,7 @@ module.exports = {
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
 
-        await queryInterface.createTable('students2', {
+        await queryInterface.createTable(STUDENTS2_T, {
             id: {
                 type: Sequelize.DataTypes.INTEGER,
                 primaryKey: true,
@@ -27,6 +29,6 @@ module.exports = {
      * await queryInterface.dropTable('users');
      */
 
-        await queryInterface.dropTable('students2');
+        await queryInterface.dropTable(STUDENTS2_T);
     }
 };

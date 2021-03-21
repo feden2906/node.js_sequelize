@@ -1,8 +1,10 @@
 const { DataTypes } = require('sequelize');
 
+const { dataBaseTablesEnum: { STUDENT, STUDENTS_T } } = require('../../../constant');
+
 module.exports = (client) => {
     const Student = client.define(
-        'Student',
+        STUDENT,
         {
             id: {
                 type: DataTypes.INTEGER,
@@ -14,7 +16,7 @@ module.exports = (client) => {
             name: { type: DataTypes.STRING }
         },
         {
-            tableName: 'students',
+            tableName: STUDENTS_T,
             timestamps: false
         }
     );
