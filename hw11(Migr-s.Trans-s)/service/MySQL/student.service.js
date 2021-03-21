@@ -39,18 +39,18 @@ module.exports = {
         });
     },
 
-    createStu2: (studentObj) => {
-        const Student = db.getModel('Student');
-
-        return Student.create(studentObj);
-    },
-
-    updateStu2: (id, student) => {
-        const Student = db.getModel('Student');
-
-        return Student.update(student, {
-            where: { id },
-            returning: true
-        });
-    },
+    // createStu2: (studentObj) => {
+    //     const Student = db.getModel('Student');
+    //
+    //     return Student.create(studentObj);
+    // },
+    //
+    // updateStu2: (id, student) => {
+    //     const Student = db.getModel('Student');
+    //
+    //     return Student.update(student, {
+    //         where: { id },
+    //         returning: true
+    //     });
+    // },
 };

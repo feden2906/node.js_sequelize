@@ -13,7 +13,7 @@ module.exports = {
                 id: {
                     type: Sequelize.DataTypes.INTEGER,
                     autoIncrement: true,
-                    allowNull: false,
+                    // allowNull: false,
                     primaryKey: true
                 },
                 date: { type: Sequelize.DataTypes.STRING },

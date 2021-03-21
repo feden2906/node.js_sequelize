@@ -7,7 +7,7 @@ module.exports = (client) => {
             id: {
                 type: DataTypes.INTEGER,
                 autoIncrement: true,
-                allowNull: false,
+                // allowNull: false,
                 primaryKey: true
             },
             date: { type: DataTypes.STRING },

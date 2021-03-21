@@ -1,23 +1,23 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (client) => {
-    const Student = client.define(
-        'Student',
+    const Rating = client.define(
+        'Rating',
         {
             id: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true
             },
-            age: { type: DataTypes.INTEGER },
-            gender: { type: DataTypes.STRING },
-            name: { type: DataTypes.STRING }
+            student_id: { type: DataTypes.INTEGER },
+            lesson_id: { type: DataTypes.INTEGER },
+            rating: { type: DataTypes.INTEGER }
         },
         {
-            tableName: 'students',
+            tableName: 'ratings',
             timestamps: false
         }
     );
 
-    return Student;
+    return Rating;
 };
