@@ -10,4 +10,8 @@ router.route('/')
         studentController.getAll
     );
 
+router.route('/:stuId')
+    .delete(studentController.deleteStudent)
+    .put(studentController.updateStudent);
+
 module.exports = router;
